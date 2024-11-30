@@ -1,34 +1,55 @@
 import { serve } from "https://deno.land/std@0.202.0/http/server.ts";
 
-// Serve the main page (index.html) without applying style.css
-async function mainHandler() {
-  const html = await Deno.readTextFile("./index.html"); // Read index.html
+// Function to serve index.html
+async function indexHandler() {
+  const html = await Deno.readTextFile("./index.html");
   return new Response(html, {
     headers: { "content-type": "text/html" },
   });
 }
 
-// Serve the validation page (validation.html) with style.css
+// Function to serve validation.html with style.css
 async function validationHandler() {
-  const html = await Deno.readTextFile("./validation.html"); // Read validation.html
-  const css = await Deno.readTextFile("./style.css"); // Read style.css
-  
-  // Add the CSS to the validation page HTML
-  const updatedHtml = html.replace("</head>", `<style>${css}</style></head>`);
-  
-  return new Response(updatedHtml, {
+  const html = await Deno.readTextFile("./validation.html");
+  return new Response(html, {
     headers: { "content-type": "text/html" },
   });
 }
 
+// Function to serve confirm.html
+async function confirmHandler() {
+  const html = await Deno.readTextFile("./confirm.html");
+  return new Response(html, {
+    headers: { "content-type": "text/html" },
+  });
+}
+
+// Function to serve style.css
+async function styleHandler() {
+  const css = await Deno.readTextFile("./style.css");
+  return new Response(css, {
+    headers: { "content-type": "text/css" },
+  });
+}
+
+// Main routing logic
 const handler = (req: Request) => {
   const url = new URL(req.url);
-  if (url.pathname === "/validation.html") {
-    return validationHandler(); // Serve validation page with styles
+
+  if (url.pathname === "/") {
+    return indexHandler(); // Serve the home page (index.html)
+  } else if (url.pathname === "/validation.html") {
+    return validationHandler(); // Serve the validation page (validation.html)
+  } else if (url.pathname === "/confirm.html") {
+    return confirmHandler(); // Serve the confirm page (confirm.html)
+  } else if (url.pathname === "/style.css") {
+    return styleHandler(); // Serve the CSS file
   }
-  // Default to mainHandler (index.html)
-  return mainHandler();
+
+  // Default handler for unknown routes
+  return new Response("Page Not Found", { status: 404 });
 };
 
+// Start the server
 console.log("Server is running on http://localhost:8000");
 serve(handler);
