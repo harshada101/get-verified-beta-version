@@ -3,7 +3,12 @@ import { serve } from "https://deno.land/std@0.202.0/http/server.ts";
 // Serve the main page (index.html)
 async function mainHandler() {
   const html = await Deno.readTextFile("./index.html"); // Read index.html
-  return new Response(html, {
+  const css = await Deno.readTextFile("./style.css"); // Read style.css
+  
+  // Add the CSS link to the HTML
+  const updatedHtml = html.replace("</head>", `<style>${css}</style></head>`);
+  
+  return new Response(updatedHtml, {
     headers: { "content-type": "text/html" },
   });
 }
@@ -11,7 +16,12 @@ async function mainHandler() {
 // Serve the validation page (validation.html)
 async function validationHandler() {
   const html = await Deno.readTextFile("./validation.html"); // Read validation.html
-  return new Response(html, {
+  const css = await Deno.readTextFile("./style.css"); // Read style.css
+  
+  // Add the CSS link to the validation page HTML
+  const updatedHtml = html.replace("</head>", `<style>${css}</style></head>`);
+  
+  return new Response(updatedHtml, {
     headers: { "content-type": "text/html" },
   });
 }
